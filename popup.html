@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Polymorphic Research Extension</title>
+  <style>
+    :root {
+      --primary-color: #4CAF50;
+      --secondary-color: #2196F3;
+      --danger-color: #f44336;
+      --background-color: #f5f5f5;
+      --text-color: #333;
+    }
+
+    body {
+      width: 400px;
+      padding: 15px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .section {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .section-title {
+      margin: 0 0 10px 0;
+      color: var(--primary-color);
+      font-size: 1.1em;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    select, input[type="range"] {
+      width: 100%;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+
+    button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+
+    .primary-btn {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .secondary-btn {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+
+    .danger-btn {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .success {
+      background-color: #dff0d8;
+      color: #3c763d;
+      display: block;
+    }
+
+    .error {
+      background-color: #f2dede;
+      color: #a94442;
+      display: block;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary-color);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .behavior-preview {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Polymorphic Research</h2>
+      <div class="switch">
+        <input type="checkbox" id="auto-switch">
+        <span class="slider"></span>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3 class="section-title">Behavior Selection</h3>
+      <div class="control-group">
+        <select id="behavior-select">
+          <option value="default">Default Behavior</option>
+          <option value="morph1">Visual Enhancement</option>
+          <option value="morph2">Interactive Elements</option>
+          <option value="morph3">Accessibility Mode</option>
+          <option value="morph4">Animation Effects</option>
+          <option value="morph5">Content Analysis</option>
+          <option value="morph6">Security Mode</option>
+        </select>
+        <div class="behavior-preview" id="behavior-preview">
+          Select a behavior to see its description
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3 class="section-title">Behavior Settings</h3>
+      <div class="control-group">
+        <label>Intensity: <span id="intensity-value">50%</span></label>
+        <input type="range" id="intensity-slider" min="0" max="100" value="50">
+        
+        <label>Duration: <span id="duration-value">5s</span></label>
+        <input type="range" id="duration-slider" min="1" max="10" value="5">
+      </div>
+    </div>
+
+    <div class="section">
+      <h3 class="section-title">Auto-Switch Settings</h3>
+      <div class="control-group">
+        <label>Switch Interval (minutes):</label>
+        <input type="number" id="switch-interval" min="1" max="60" value="5">
+        <label>Randomize Behaviors:</label>
+        <div class="switch">
+          <input type="checkbox" id="randomize-switch">
+          <span class="slider"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button id="apply-behavior" class="primary-btn">Apply Behavior</button>
+      <button id="reset-behavior" class="secondary-btn">Reset</button>
+      <button id="save-settings" class="secondary-btn">Save Settings</button>
+    </div>
+
+    <div id="status" class="status"></div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html> 
