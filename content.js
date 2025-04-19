@@ -42,13 +42,8 @@ chrome.runtime.sendMessage({ action: 'getBehavior' }, function(response) {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'applyBehavior' && behaviors[message.behavior]) {
     behaviors[message.behavior]();
-  }
-});
-
-// Listen for messages from popup
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request.action === 'applyMimicMode') {
-    applyMimicBehavior(request.mode);
+  } else if (message.action === 'applyMimicMode') {
+    applyMimicBehavior(message.mode);
   }
 });
 
