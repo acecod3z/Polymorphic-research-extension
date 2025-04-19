@@ -166,6 +166,20 @@
       gap: 10px;
       justify-content: space-between;
     }
+
+    .mimic-mode {
+      background-color: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+
+    .mimic-description {
+      font-size: 0.9em;
+      color: #856404;
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
@@ -175,6 +189,23 @@
       <div class="switch">
         <input type="checkbox" id="auto-switch">
         <span class="slider"></span>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3 class="section-title">Mimic Mode</h3>
+      <div class="control-group">
+        <select id="mimic-select">
+          <option value="none">No Mimic</option>
+          <option value="adblock">Ad Blocker</option>
+          <option value="darkmode">Dark Mode</option>
+          <option value="grammarly">Grammar Checker</option>
+          <option value="password">Password Manager</option>
+          <option value="translate">Page Translator</option>
+        </select>
+        <div class="mimic-mode" id="mimic-preview">
+          Select a mode to mimic another extension
+        </div>
       </div>
     </div>
 

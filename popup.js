@@ -9,6 +9,16 @@ const behaviorDescriptions = {
   morph6: "Enhances security by modifying potentially sensitive elements"
 };
 
+// Mimic mode descriptions
+const mimicDescriptions = {
+  none: "No mimic mode active",
+  adblock: "Blocks advertisements and tracking elements",
+  darkmode: "Applies dark theme to web pages",
+  grammarly: "Highlights and suggests grammar improvements",
+  password: "Detects and offers to save passwords",
+  translate: "Translates page content to selected language"
+};
+
 document.addEventListener('DOMContentLoaded', function() {
   // UI Elements
   const behaviorSelect = document.getElementById('behavior-select');
@@ -25,6 +35,10 @@ document.addEventListener('DOMContentLoaded', function() {
   const intensityValue = document.getElementById('intensity-value');
   const durationValue = document.getElementById('duration-value');
 
+  // New Mimic Mode Elements
+  const mimicSelect = document.getElementById('mimic-select');
+  const mimicPreview = document.getElementById('mimic-preview');
+
   // Load saved settings
   chrome.storage.local.get([
     'currentBehavior',
@@ -32,11 +46,16 @@ document.addEventListener('DOMContentLoaded', function() {
     'randomizeEnabled',
     'intensity',
     'duration',
-    'switchInterval'
+    'switchInterval',
+    'mimicMode'
   ], function(result) {
     if (result.currentBehavior) {
       behaviorSelect.value = result.currentBehavior;
       updateBehaviorPreview(result.currentBehavior);
+    }
+    if (result.mimicMode) {
+      mimicSelect.value = result.mimicMode;
+      updateMimicPreview(result.mimicMode);
     }
     if (result.autoSwitchEnabled !== undefined) {
       autoSwitch.checked = result.autoSwitchEnabled;
@@ -62,6 +81,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // Event Listeners
   behaviorSelect.addEventListener('change', function() {
     updateBehaviorPreview(this.value);
+  });
+
+  mimicSelect.addEventListener('change', function() {
+    updateMimicPreview(this.value);
+    applyMimicMode(this.value);
   });
 
   intensitySlider.addEventListener('input', function() {
@@ -124,6 +148,10 @@ document.addEventListener('DOMContentLoaded', function() {
     behaviorPreview.textContent = behaviorDescriptions[behavior] || "No description available";
   }
 
+  function updateMimicPreview(mode) {
+    mimicPreview.textContent = mimicDescriptions[mode] || "No description available";
+  }
+
   function applyBehavior(settings) {
     chrome.storage.local.set(settings, function() {
       showStatus('Behavior applied successfully!', 'success');
@@ -140,6 +168,19 @@ document.addEventListener('DOMContentLoaded', function() {
       } else {
         chrome.alarms.clear('behaviorSwitch');
       }
+    });
+  }
+
+  function applyMimicMode(mode) {
+    chrome.storage.local.set({ mimicMode: mode }, function() {
+      showStatus(`Mimic mode "${mode}" applied`, 'success');
+      
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: 'applyMimicMode',
+          mode: mode
+        });
+      });
     });
   }
 
