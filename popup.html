@@ -52,7 +52,7 @@
       margin-bottom: 15px;
     }
 
-    select, input[type="range"] {
+    select, input[type="range"], input[type="number"] {
       width: 100%;
       padding: 8px;
       border-radius: 4px;
@@ -106,11 +106,13 @@
       display: block;
     }
 
+    /* Updated switch styles */
     .switch {
       position: relative;
       display: inline-block;
       width: 60px;
       height: 34px;
+      margin: 5px 0;
     }
 
     .switch input {
@@ -157,6 +159,12 @@
       background-color: #f8f9fa;
       border-radius: 4px;
       font-size: 0.9em;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
     }
   </style>
 </head>

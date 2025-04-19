@@ -40,9 +40,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (result.autoSwitchEnabled !== undefined) {
       autoSwitch.checked = result.autoSwitchEnabled;
+      updateSwitchUI(autoSwitch);
     }
     if (result.randomizeEnabled !== undefined) {
       randomizeSwitch.checked = result.randomizeEnabled;
+      updateSwitchUI(randomizeSwitch);
     }
     if (result.intensity) {
       intensitySlider.value = result.intensity;
@@ -70,6 +72,17 @@ document.addEventListener('DOMContentLoaded', function() {
     durationValue.textContent = `${this.value}s`;
   });
 
+  // Toggle switch event listeners
+  autoSwitch.addEventListener('change', function() {
+    updateSwitchUI(this);
+    saveToggleState('autoSwitchEnabled', this.checked);
+  });
+
+  randomizeSwitch.addEventListener('change', function() {
+    updateSwitchUI(this);
+    saveToggleState('randomizeEnabled', this.checked);
+  });
+
   applyButton.addEventListener('click', function() {
     const settings = {
       behavior: behaviorSelect.value,
@@ -92,6 +105,21 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Functions
+  function updateSwitchUI(switchElement) {
+    const slider = switchElement.nextElementSibling;
+    if (switchElement.checked) {
+      slider.style.backgroundColor = 'var(--primary-color)';
+    } else {
+      slider.style.backgroundColor = '#ccc';
+    }
+  }
+
+  function saveToggleState(key, value) {
+    chrome.storage.local.set({ [key]: value }, function() {
+      showStatus(`${key} ${value ? 'enabled' : 'disabled'}`, 'success');
+    });
+  }
+
   function updateBehaviorPreview(behavior) {
     behaviorPreview.textContent = behaviorDescriptions[behavior] || "No description available";
   }
