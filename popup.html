@@ -106,22 +106,32 @@
       display: block;
     }
 
-    /* Updated switch styles */
-    .switch {
+    /* Updated toggle switch styles */
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 10px 0;
+    }
+
+    .toggle-label {
+      flex: 1;
+    }
+
+    .toggle-switch {
       position: relative;
       display: inline-block;
       width: 60px;
       height: 34px;
-      margin: 5px 0;
     }
 
-    .switch input {
+    .toggle-switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
 
-    .slider {
+    .toggle-slider {
       position: absolute;
       cursor: pointer;
       top: 0;
@@ -133,7 +143,7 @@
       border-radius: 34px;
     }
 
-    .slider:before {
+    .toggle-slider:before {
       position: absolute;
       content: "";
       height: 26px;
@@ -145,11 +155,11 @@
       border-radius: 50%;
     }
 
-    input:checked + .slider {
+    input:checked + .toggle-slider {
       background-color: var(--primary-color);
     }
 
-    input:checked + .slider:before {
+    input:checked + .toggle-slider:before {
       transform: translateX(26px);
     }
 
@@ -186,9 +196,12 @@
   <div class="container">
     <div class="header">
       <h2>Polymorphic Research</h2>
-      <div class="switch">
-        <input type="checkbox" id="auto-switch">
-        <span class="slider"></span>
+      <div class="toggle-container">
+        <span class="toggle-label">Auto Switch</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="auto-switch">
+          <span class="toggle-slider"></span>
+        </label>
       </div>
     </div>
 
@@ -243,10 +256,12 @@
       <div class="control-group">
         <label>Switch Interval (minutes):</label>
         <input type="number" id="switch-interval" min="1" max="60" value="5">
-        <label>Randomize Behaviors:</label>
-        <div class="switch">
-          <input type="checkbox" id="randomize-switch">
-          <span class="slider"></span>
+        <div class="toggle-container">
+          <span class="toggle-label">Randomize Behaviors</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="randomize-switch">
+            <span class="toggle-slider"></span>
+          </label>
         </div>
       </div>
     </div>
@@ -259,6 +274,6 @@
 
     <div id="status" class="status"></div>
   </div>
-  <script src="popup.js"></script>
+  <script src="popup.js" type="module"></script>
 </body>
 </html> 

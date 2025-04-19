@@ -1,5 +1,5 @@
-// Behavior descriptions
-const behaviorDescriptions = {
+// Constants
+const BEHAVIOR_DESCRIPTIONS = {
   default: "Default behavior with no modifications",
   morph1: "Enhances visual elements with color adjustments and highlighting",
   morph2: "Adds interactive elements and hover effects to page content",
@@ -9,8 +9,7 @@ const behaviorDescriptions = {
   morph6: "Enhances security by modifying potentially sensitive elements"
 };
 
-// Mimic mode descriptions
-const mimicDescriptions = {
+const MIMIC_DESCRIPTIONS = {
   none: "No mimic mode active",
   adblock: "Blocks advertisements and tracking elements",
   darkmode: "Applies dark theme to web pages",
@@ -19,144 +18,164 @@ const mimicDescriptions = {
   translate: "Translates page content to selected language"
 };
 
-document.addEventListener('DOMContentLoaded', function() {
+// Main application
+(function() {
+  'use strict';
+
   // UI Elements
-  const behaviorSelect = document.getElementById('behavior-select');
-  const applyButton = document.getElementById('apply-behavior');
-  const resetButton = document.getElementById('reset-behavior');
-  const saveButton = document.getElementById('save-settings');
-  const statusDiv = document.getElementById('status');
-  const behaviorPreview = document.getElementById('behavior-preview');
-  const autoSwitch = document.getElementById('auto-switch');
-  const randomizeSwitch = document.getElementById('randomize-switch');
-  const intensitySlider = document.getElementById('intensity-slider');
-  const durationSlider = document.getElementById('duration-slider');
-  const switchInterval = document.getElementById('switch-interval');
-  const intensityValue = document.getElementById('intensity-value');
-  const durationValue = document.getElementById('duration-value');
+  let behaviorSelect;
+  let applyButton;
+  let resetButton;
+  let saveButton;
+  let statusDiv;
+  let behaviorPreview;
+  let mimicSelect;
+  let mimicPreview;
+  let autoSwitch;
+  let randomizeSwitch;
+  let intensitySlider;
+  let durationSlider;
+  let switchInterval;
+  let intensityValue;
+  let durationValue;
 
-  // New Mimic Mode Elements
-  const mimicSelect = document.getElementById('mimic-select');
-  const mimicPreview = document.getElementById('mimic-preview');
+  // Initialize the application
+  function init() {
+    initializeElements();
+    loadSavedSettings();
+    setupEventListeners();
+  }
 
-  // Load saved settings
-  chrome.storage.local.get([
-    'currentBehavior',
-    'autoSwitchEnabled',
-    'randomizeEnabled',
-    'intensity',
-    'duration',
-    'switchInterval',
-    'mimicMode'
-  ], function(result) {
-    if (result.currentBehavior) {
-      behaviorSelect.value = result.currentBehavior;
-      updateBehaviorPreview(result.currentBehavior);
-    }
-    if (result.mimicMode) {
-      mimicSelect.value = result.mimicMode;
-      updateMimicPreview(result.mimicMode);
-    }
-    if (result.autoSwitchEnabled !== undefined) {
-      autoSwitch.checked = result.autoSwitchEnabled;
-      updateSwitchUI(autoSwitch);
-    }
-    if (result.randomizeEnabled !== undefined) {
-      randomizeSwitch.checked = result.randomizeEnabled;
-      updateSwitchUI(randomizeSwitch);
-    }
-    if (result.intensity) {
-      intensitySlider.value = result.intensity;
-      intensityValue.textContent = `${result.intensity}%`;
-    }
-    if (result.duration) {
-      durationSlider.value = result.duration;
-      durationValue.textContent = `${result.duration}s`;
-    }
-    if (result.switchInterval) {
-      switchInterval.value = result.switchInterval;
-    }
-  });
+  // Initialize DOM elements
+  function initializeElements() {
+    behaviorSelect = document.getElementById('behavior-select');
+    applyButton = document.getElementById('apply-behavior');
+    resetButton = document.getElementById('reset-behavior');
+    saveButton = document.getElementById('save-settings');
+    statusDiv = document.getElementById('status');
+    behaviorPreview = document.getElementById('behavior-preview');
+    mimicSelect = document.getElementById('mimic-select');
+    mimicPreview = document.getElementById('mimic-preview');
+    autoSwitch = document.getElementById('auto-switch');
+    randomizeSwitch = document.getElementById('randomize-switch');
+    intensitySlider = document.getElementById('intensity-slider');
+    durationSlider = document.getElementById('duration-slider');
+    switchInterval = document.getElementById('switch-interval');
+    intensityValue = document.getElementById('intensity-value');
+    durationValue = document.getElementById('duration-value');
+  }
 
-  // Event Listeners
-  behaviorSelect.addEventListener('change', function() {
-    updateBehaviorPreview(this.value);
-  });
+  // Load saved settings from storage
+  function loadSavedSettings() {
+    chrome.storage.local.get([
+      'currentBehavior',
+      'autoSwitchEnabled',
+      'randomizeEnabled',
+      'intensity',
+      'duration',
+      'switchInterval',
+      'mimicMode'
+    ], function(result) {
+      if (result.currentBehavior) {
+        behaviorSelect.value = result.currentBehavior;
+        updateBehaviorPreview(result.currentBehavior);
+      }
+      if (result.mimicMode) {
+        mimicSelect.value = result.mimicMode;
+        updateMimicPreview(result.mimicMode);
+      }
+      if (result.autoSwitchEnabled !== undefined) {
+        autoSwitch.checked = result.autoSwitchEnabled;
+        updateToggleUI(autoSwitch);
+      }
+      if (result.randomizeEnabled !== undefined) {
+        randomizeSwitch.checked = result.randomizeEnabled;
+        updateToggleUI(randomizeSwitch);
+      }
+      if (result.intensity) {
+        intensitySlider.value = result.intensity;
+        intensityValue.textContent = `${result.intensity}%`;
+      }
+      if (result.duration) {
+        durationSlider.value = result.duration;
+        durationValue.textContent = `${result.duration}s`;
+      }
+      if (result.switchInterval) {
+        switchInterval.value = result.switchInterval;
+      }
+    });
+  }
 
-  mimicSelect.addEventListener('change', function() {
-    updateMimicPreview(this.value);
-    applyMimicMode(this.value);
-  });
+  // Set up event listeners
+  function setupEventListeners() {
+    behaviorSelect.addEventListener('change', () => {
+      updateBehaviorPreview(behaviorSelect.value);
+    });
 
-  intensitySlider.addEventListener('input', function() {
-    intensityValue.textContent = `${this.value}%`;
-  });
+    mimicSelect.addEventListener('change', () => {
+      updateMimicPreview(mimicSelect.value);
+      applyMimicMode(mimicSelect.value);
+    });
 
-  durationSlider.addEventListener('input', function() {
-    durationValue.textContent = `${this.value}s`;
-  });
+    intensitySlider.addEventListener('input', () => {
+      intensityValue.textContent = `${intensitySlider.value}%`;
+    });
 
-  // Toggle switch event listeners
-  autoSwitch.addEventListener('change', function() {
-    updateSwitchUI(this);
-    saveToggleState('autoSwitchEnabled', this.checked);
-  });
+    durationSlider.addEventListener('input', () => {
+      durationValue.textContent = `${durationSlider.value}s`;
+    });
 
-  randomizeSwitch.addEventListener('change', function() {
-    updateSwitchUI(this);
-    saveToggleState('randomizeEnabled', this.checked);
-  });
+    autoSwitch.addEventListener('change', () => {
+      updateToggleUI(autoSwitch);
+      saveToggleState('autoSwitchEnabled', autoSwitch.checked);
+    });
 
-  applyButton.addEventListener('click', function() {
-    const settings = {
-      behavior: behaviorSelect.value,
-      intensity: intensitySlider.value,
-      duration: durationSlider.value,
-      autoSwitchEnabled: autoSwitch.checked,
-      randomizeEnabled: randomizeSwitch.checked,
-      switchInterval: switchInterval.value
-    };
+    randomizeSwitch.addEventListener('change', () => {
+      updateToggleUI(randomizeSwitch);
+      saveToggleState('randomizeEnabled', randomizeSwitch.checked);
+    });
 
-    applyBehavior(settings);
-  });
+    applyButton.addEventListener('click', () => {
+      const settings = {
+        behavior: behaviorSelect.value,
+        intensity: intensitySlider.value,
+        duration: durationSlider.value,
+        autoSwitchEnabled: autoSwitch.checked,
+        randomizeEnabled: randomizeSwitch.checked,
+        switchInterval: switchInterval.value
+      };
+      applyBehavior(settings);
+    });
 
-  resetButton.addEventListener('click', function() {
-    resetToDefault();
-  });
+    resetButton.addEventListener('click', resetToDefault);
+    saveButton.addEventListener('click', saveSettings);
+  }
 
-  saveButton.addEventListener('click', function() {
-    saveSettings();
-  });
-
-  // Functions
-  function updateSwitchUI(switchElement) {
-    const slider = switchElement.nextElementSibling;
-    if (switchElement.checked) {
-      slider.style.backgroundColor = 'var(--primary-color)';
-    } else {
-      slider.style.backgroundColor = '#ccc';
-    }
+  // Helper functions
+  function updateToggleUI(toggleElement) {
+    const slider = toggleElement.nextElementSibling;
+    slider.style.backgroundColor = toggleElement.checked ? 'var(--primary-color)' : '#ccc';
   }
 
   function saveToggleState(key, value) {
-    chrome.storage.local.set({ [key]: value }, function() {
+    chrome.storage.local.set({ [key]: value }, () => {
       showStatus(`${key} ${value ? 'enabled' : 'disabled'}`, 'success');
     });
   }
 
   function updateBehaviorPreview(behavior) {
-    behaviorPreview.textContent = behaviorDescriptions[behavior] || "No description available";
+    behaviorPreview.textContent = BEHAVIOR_DESCRIPTIONS[behavior] || "No description available";
   }
 
   function updateMimicPreview(mode) {
-    mimicPreview.textContent = mimicDescriptions[mode] || "No description available";
+    mimicPreview.textContent = MIMIC_DESCRIPTIONS[mode] || "No description available";
   }
 
   function applyBehavior(settings) {
-    chrome.storage.local.set(settings, function() {
+    chrome.storage.local.set(settings, () => {
       showStatus('Behavior applied successfully!', 'success');
       
-      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, {
           action: 'applyBehavior',
           settings: settings
@@ -172,10 +191,10 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function applyMimicMode(mode) {
-    chrome.storage.local.set({ mimicMode: mode }, function() {
+    chrome.storage.local.set({ mimicMode: mode }, () => {
       showStatus(`Mimic mode "${mode}" applied`, 'success');
       
-      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, {
           action: 'applyMimicMode',
           mode: mode
@@ -191,10 +210,11 @@ document.addEventListener('DOMContentLoaded', function() {
       duration: 5,
       autoSwitchEnabled: false,
       randomizeEnabled: false,
-      switchInterval: 5
+      switchInterval: 5,
+      mimicMode: 'none'
     };
 
-    chrome.storage.local.set(defaultSettings, function() {
+    chrome.storage.local.set(defaultSettings, () => {
       showStatus('Reset to default settings', 'success');
       location.reload();
     });
@@ -209,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
       switchInterval: switchInterval.value
     };
 
-    chrome.storage.local.set(settings, function() {
+    chrome.storage.local.set(settings, () => {
       showStatus('Settings saved successfully!', 'success');
     });
   }
@@ -228,4 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
       statusDiv.className = 'status';
     }, 3000);
   }
-}); 
+
+  // Initialize the application when the DOM is loaded
+  document.addEventListener('DOMContentLoaded', init);
+})(); 
