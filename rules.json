@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "*",
+      "resourceTypes": [
+        "script",
+        "image",
+        "stylesheet",
+        "xmlhttprequest"
+      ],
+      "domains": [
+        "doubleclick.net",
+        "google-analytics.com",
+        "googlesyndication.com",
+        "googleadservices.com"
+      ]
+    }
+  }
+] 

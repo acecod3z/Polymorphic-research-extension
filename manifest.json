@@ -9,10 +9,7 @@
     "scripting",
     "tabs",
     "webNavigation",
-    "alarms",
-    "webRequest",
-    "webRequestBlocking",
-    "declarativeNetRequest"
+    "alarms"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -30,12 +27,5 @@
       "js": ["content.js"],
       "css": ["styles.css"]
     }
-  ],
-  "declarative_net_request": {
-    "rule_resources": [{
-      "id": "ruleset_1",
-      "enabled": true,
-      "path": "rules.json"
-    }]
-  }
+  ]
 } 
